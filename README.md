@@ -1,3 +1,5 @@
+![](pixelated_dithered_checkerboard_torus.gif)
+
 # threejs-ordered-dithering-effect
 Threejs post-processing shader to apply an ordered dithering effect
 
