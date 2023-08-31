@@ -31,3 +31,7 @@ Default values will be applied if none are provided (mapSize: 4, scale: 1)
 ## :pencil: License
 
 This project is licensed under [MIT](https://opensource.org/licenses/MIT) license.
+
+## :loudspeaker: Shout outs!
+
+Hugh Kennedy for this repo - https://github.com/hughsk/glsl-dither
