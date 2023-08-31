@@ -15,12 +15,18 @@ import { OrderedDitherPass } from './OrderedDitherPass.js'
 
 Initialise like so:
 ```js
-const orderedDitherEffect = new OrderedDitherPass(4);
+const orderedDitherEffect = new OrderedDitherPass(mapSize, scale);
 composer.addPass( orderedDitherEffect );
 ```
 
-The allowed values at this point are `4` and `8`.
-These relate to the Bayer matrix threshold map size (i.e. 4x4 or 8x8).
+`mapSize` refers to the Bayer matrix threshold map size.
+
+This can be a value of `2`, `4` or `8` at this time.
+
+`scale` refers to the scale of the effect. This is locked to increments of `0.5` (i.e. 1, 1.5, 2, 2.5 and so on). other values can be entered but the value will be sanitised by the shader.
+
+Default values will be applied if none are provided (mapSize: 4, scale: 1)
+
 
 ## :pencil: License
 

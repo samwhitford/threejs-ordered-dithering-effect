@@ -7,9 +7,9 @@ const OrderedDitherShader = {
 	name: 'OrderedDitherShader',
 
 	uniforms: {
-
 		'tDiffuse': { value: null },
-
+        'thresholdMapSize': { value: 4 },
+        'scale': { value: 1 }
 	},
 
 	vertexShader: /* glsl */`
@@ -26,10 +26,11 @@ const OrderedDitherShader = {
 	fragmentShader: /* glsl */`
 
     uniform sampler2D tDiffuse;
+    uniform float thresholdMapSize;
+    uniform float scale;
     varying vec2 vUv;
 
     float colorQuantity = 64.;
-    float scale = 1.0;
 
     float luma(vec3 color) {
     return dot(color, vec3(0.3, 0.6, 0.1));
@@ -159,11 +160,45 @@ const OrderedDitherShader = {
     return vec4(color.rgb * dither4x4(position, luma(color)), 1.0);
     }
 
-        void main() {
+    float dither2x2(vec2 position, float brightness) {
+    int x = int(mod(position.x, 2.0));
+    int y = int(mod(position.y, 2.0));
+    int index = x + y * 2;
+    float limit = 0.0;
+
+    if (x < 8) {
+            if (index == 0) limit = 0.25;
+            if (index == 1) limit = 0.75;
+            if (index == 2) limit = 1.00;
+            if (index == 3) limit = 0.50;
+        }
+
+        return brightness < limit ? 0.0 : 1.0;
+    }
+
+    vec3 dither2x2(vec2 position, vec3 color) {
+        return color * dither2x2(position, luma(color));
+    }
+
+    vec4 dither2x2(vec2 position, vec4 color) {
+        return vec4(color.rgb * dither2x2(position, luma(color)), 1.0);
+    }
+
+    void main() {
+
+    float scaleClean = floor(scale / 0.5) * 0.5;
 
     vec2 newUV = vUv;
+    if (thresholdMapSize == 2.0){
+        gl_FragColor = dither2x2(gl_FragCoord.xy / scaleClean, texture2D(tDiffuse, newUV)) * 3.0;
+    }
+    if (thresholdMapSize == 4.0){
+        gl_FragColor = dither4x4(gl_FragCoord.xy / scaleClean , texture2D(tDiffuse, newUV)) * 3.0;
+    }
+    if (thresholdMapSize == 8.0){
+        gl_FragColor = dither8x8(gl_FragCoord.xy / scaleClean, texture2D(tDiffuse, newUV)) * 3.0;
+    }
 
-    gl_FragColor = dither4x4(gl_FragCoord.xy, texture2D(tDiffuse, newUV)) * 3.0;
     }`
 
 };

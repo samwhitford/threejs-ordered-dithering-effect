@@ -7,13 +7,18 @@ import { OrderedDitherShader } from './OrderedDitherShader.js';
 
 class OrderedDitherPass extends Pass {
 
-	constructor() {
+	constructor( thresholdMapSize, scale ) {
 
 		super();
 
 		const shader = OrderedDitherShader;
 
 		this.uniforms = UniformsUtils.clone( shader.uniforms );
+
+
+
+        this.uniforms[ 'thresholdMapSize' ].value = ( thresholdMapSize !== undefined ) ? thresholdMapSize : 4.0 ;
+        this.uniforms[ 'scale' ].value = ( scale !== undefined ) ? scale : 1.0;
 
 		this.material = new ShaderMaterial( {
 
